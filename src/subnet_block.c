@@ -5,6 +5,7 @@
 
 #include "ip_addr.h"
 
+// Subnet block class
 typedef struct {
     int num_of_subnets;
     int hosts_per_subnet;
@@ -23,21 +24,21 @@ subnet_block_t* subnet_block_malloc(void){
     return (subnet_block_t*)malloc(sizeof(subnet_block_t));
 }
 
-int __calculate_num_of_subnets(int mask_cidr, int original_mask_cidr){
+static int __calculate_num_of_subnets(int mask_cidr, int original_mask_cidr){
     return (int)pow(2, (mask_cidr - original_mask_cidr));
 }
 
-int __calculate_hosts_per_subnet(int mask_cidr){
+static int __calculate_hosts_per_subnet(int mask_cidr){
     return (int)(pow(2, (32 - mask_cidr)) - 2);
 }
 
-int __convert_32_mask_to_cdir(u_int32_t mask_32){
+static int __convert_32_mask_to_cdir(u_int32_t mask_32){
     int num_of_zeros;
     for(num_of_zeros = 0; (mask_32 & 1) == 0; num_of_zeros++, mask_32 >>= 1){ }
     return 32 - num_of_zeros;
 }
 
-char __class_from_first_octet(struct ip_addr_t* ip_addr){
+static char __class_from_first_octet(struct ip_addr_t* ip_addr){
     u_int8_t first_octet = ip_addr_get_octet(ip_addr, 1);
 
     if(first_octet <= 126){
@@ -147,9 +148,17 @@ void subnet_block_print_address_ranges(subnet_block_t* subnet_block){
     printf("\n");
 }
 
-u_int32_t dotted_decimal_to_32bit(u_int8_t first, u_int8_t second, u_int8_t third, u_int8_t fourth){
-    return (first << 24) | (second << 16) | (third << 8) | (fourth);
+int subnet_block_get_hosts_per_subnet(subnet_block_t* subnet_block){
+    return subnet_block->hosts_per_subnet;
 }
+
+int subnet_block_get_num_of_subnets(subnet_block_t* subnet_block){
+    return subnet_block->num_of_subnets;
+}
+
+// u_int32_t dotted_decimal_to_32bit(u_int8_t first, u_int8_t second, u_int8_t third, u_int8_t fourth){
+//     return (first << 24) | (second << 16) | (third << 8) | (fourth);
+// }
 
 // Testing purposes
 // int main(){

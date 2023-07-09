@@ -18,7 +18,7 @@ int main(int argc, char** argv){
     } else if(argc == 2){
         // subnet [Classless subnet block with CIDR mask]
         u_int32_t ip_addr, new_subnet, old_subnet, result;
-        result = process_input_ip(argv[1], NULL, &ip_addr, &new_subnet, &old_subnet);
+        result = process_input_ip_and_mask(argv[1], NULL, &ip_addr, &new_subnet, &old_subnet);
         if(result){
             exit(result);
         }
@@ -55,4 +55,5 @@ exit codes
 2 - exited from invalid IP block
 3 - exited from invalid subnet mask
 
+I like this better now with the error checking outside of the 
 */

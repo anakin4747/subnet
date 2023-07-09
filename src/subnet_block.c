@@ -1,17 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
 #include "ip_addr.h"
-
-typedef int bool_t;
 
 typedef struct {
     int num_of_subnets;
     int hosts_per_subnet;
     int new_mask_cidr;
     int old_mask_cidr;
-    bool_t is_classful; // Maybe remove
     char class;
 
     struct ip_addr_t* network_addr;
@@ -37,12 +35,6 @@ int __convert_32_mask_to_cdir(u_int32_t mask_32){
     int num_of_zeros;
     for(num_of_zeros = 0; (mask_32 & 1) == 0; num_of_zeros++, mask_32 >>= 1){ }
     return 32 - num_of_zeros;
-}
-
-// Not actually fully correct since it doesn't check which class
-// Maybe just remove and have error checking in the code which creates these objects
-bool_t __subnet_block_is_classful(int mask_cidr){
-    return mask_cidr % 8 == 0;
 }
 
 char __class_from_first_octet(struct ip_addr_t* ip_addr){
@@ -87,9 +79,6 @@ void subnet_block_constructor(subnet_block_t* subnet_block,
 
     // Save class of network address
     subnet_block->class = __class_from_first_octet(subnet_block->network_addr);
-
-    // Store if block is classful
-    subnet_block->is_classful = __subnet_block_is_classful(subnet_block->new_mask_cidr);
 }
 
 void subnet_block_destructor(subnet_block_t* subnet_block){
@@ -111,13 +100,11 @@ void subnet_block_print(subnet_block_t* subnet_block){
            "Number of hosts per subnet: %d\n"
            "New subnet mask in CIDR notation: %d\n"
            "Old subnet mask in CIDR notation: %d\n"
-           "Is the subnet block classful: %s\n"
            "Class of subnet: %c\n",
            subnet_block->num_of_subnets,
            subnet_block->hosts_per_subnet,
            subnet_block->new_mask_cidr,
            subnet_block->old_mask_cidr,
-           subnet_block->is_classful ? "True" : "False",
            subnet_block->class);
     
     printf("Network address: ");
@@ -138,13 +125,25 @@ void subnet_block_print_address_ranges(subnet_block_t* subnet_block){
     int block_size = 256 - ip_addr_get_octet(subnet_block->new_subnet_mask, interesting_octet);
     printf("Block size: %d\n", block_size);
 
-    char octet_buffer[12];
+    char octet_buffer[12] = "";
+    char int_buffer[5] = "";
 
+    // Convert all but the interesting octet to a string
     for(int i = 1; i < interesting_octet; i++){
-        printf("%d.", ip_addr_get_octet(subnet_block->network_addr, i));
+        sprintf(int_buffer, "%d.", ip_addr_get_octet(subnet_block->network_addr, i));
+        strcat(octet_buffer, int_buffer);
     }
 
-    printf("%d", ip_addr_get_octet(subnet_block->network_addr, interesting_octet) + block_size);
+    // Printing network, broadcast, and usable addresses
+    for(int i = 0; i < subnet_block->num_of_subnets; i++){
+        int fourth_octet = ip_addr_get_octet(subnet_block->network_addr, interesting_octet) + (block_size * i);
+        printf("\nSubnet: %s%d\n"
+               "  Directed broadcast address: %s%d\n"
+               "    Useable address range: %s%d - %s%d\n", 
+               octet_buffer, fourth_octet,
+                  octet_buffer, fourth_octet + block_size - 1,
+                    octet_buffer, fourth_octet + 1, octet_buffer, fourth_octet + block_size - 2);
+    }
     printf("\n");
 }
 
@@ -153,25 +152,21 @@ u_int32_t dotted_decimal_to_32bit(u_int8_t first, u_int8_t second, u_int8_t thir
 }
 
 // Testing purposes
-int main(){
-    // printf("%d\n", __convert_32_mask_to_cdir(0xFFFFFF00));
+// int main(){
+//     // // printf("%d\n", __convert_32_mask_to_cdir(0xFFFFFF00));
 
-    // for(int i = 0; i < 32; i++){
-    //     printf("%d %d\n", i, __subnet_block_is_classful(i));
-    // }
+//     subnet_block_t* sn_blk = subnet_block_malloc();
+//     subnet_block_constructor(sn_blk, 
+//                              dotted_decimal_to_32bit(192, 168, 0, 0),
+//                              dotted_decimal_to_32bit(255, 255, 255, 192),
+//                              dotted_decimal_to_32bit(255, 255, 255, 0));
 
-    subnet_block_t* sn_blk = subnet_block_malloc();
-    subnet_block_constructor(sn_blk, 
-                             dotted_decimal_to_32bit(192, 168, 0, 0),
-                             dotted_decimal_to_32bit(255, 255, 255, 192),
-                             dotted_decimal_to_32bit(255, 255, 255, 0));
-
-    subnet_block_print(sn_blk);
-    subnet_block_print_address_ranges(sn_blk);
+//     subnet_block_print(sn_blk);
+//     subnet_block_print_address_ranges(sn_blk);
 
 
-    subnet_block_destructor(sn_blk);
-    free(sn_blk);
+//     subnet_block_destructor(sn_blk);
+//     free(sn_blk);
 
-    return 0;
-}
+//     return 0;
+// }

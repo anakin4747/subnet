@@ -39,6 +39,16 @@ int main(int argc, char** argv){
             default:
                 // subnet [Classless IP address] [Dotted decimal mask]
                 // subnet_classless_dd_mask(argv[1], argv[2]);
+                u_int32_t ip_addr, new_subnet, old_subnet, result;
+                result = process_input_ip_and_mask(argv[1], argv[2], &ip_addr, &new_subnet, &old_subnet);
+                if(result){
+                    exit(result);
+                }
+                printf("IP address as 32 bits: %u\n"
+                    "New subnet mask 32 bits: %u\n"
+                    "Old subnet mask 32 bits: %u\n",
+                    ip_addr, new_subnet, old_subnet);
+
                 break;
         }
     } else {

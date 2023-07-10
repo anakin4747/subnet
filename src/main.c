@@ -38,22 +38,20 @@ int main(int argc, char** argv){
         
     } else if(argc == 3){
         int length = strlen(argv[2]);
-        char last_char;
 
-        switch (last_char = argv[2][length - 1]){
+        switch (argv[2][length - 1]){
             case 'h':
             case 's':
                 // Case 4:
                 // subnet [Network address] [0-9]+(s|h)
                 // Case 5:
                 // subnet [Network address]/[Old CIDR mask] [0-9]+(s|h)
-                result = process_input_ip_and_mask(argv[1], NULL, &ip_addr, &new_subnet, &old_subnet);
+                result = process_input_ip_and_mask(argv[1], argv[2], &ip_addr, &new_subnet, &old_subnet);
                 if(result){
                     exit(result);
                 }
                 break;
             default:
-
                 // Case 2:
                 // subnet [Network address] [Dotted decimal subnet mask]
                 // Case 3:
@@ -62,19 +60,19 @@ int main(int argc, char** argv){
                 if(result){
                     exit(result);
                 }
-
-                struct subnet_block_t* subnet_block = subnet_block_malloc();
-
-                subnet_block_constructor(subnet_block, ip_addr, new_subnet, old_subnet);
-
-                subnet_block_print(subnet_block);
-                subnet_block_print_address_ranges(subnet_block);
-
-                subnet_block_destructor(subnet_block);
-                free(subnet_block);
-
                 break;
         }
+
+        struct subnet_block_t* subnet_block = subnet_block_malloc();
+
+        subnet_block_constructor(subnet_block, ip_addr, new_subnet, old_subnet);
+
+        subnet_block_print(subnet_block);
+        subnet_block_print_address_ranges(subnet_block);
+
+        subnet_block_destructor(subnet_block);
+        free(subnet_block);
+
     } else {
         // Case 6:
         // subnet [Network address] ([0-9]*s:[0-9]*(i|h))+
@@ -134,6 +132,7 @@ exit codes
 1 - exited in the main from wrong number of arguments
 2 - exited from invalid IP block
 3 - exited from invalid subnet mask
+4 - exited from invalid max expression
 
 I like this better now with the error checking outside of the 
 */

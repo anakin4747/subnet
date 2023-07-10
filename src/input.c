@@ -45,8 +45,8 @@ static bool_t __invalid_32bit_mask(u_int32_t mask_32){
 }
 
 // Validation function
-static bool_t __invalid_network_addr(u_int32_t net_addr, u_int32_t old_mask){
-    return (net_addr & ~old_mask);
+static bool_t __invalid_network_addr(u_int32_t net_addr, u_int32_t new_mask){
+    return (net_addr & ~new_mask);
 }
 
 // Validation function
@@ -121,6 +121,7 @@ static int __ip_string_to_uint32(char* arg, u_int8_t* ip_array){
             ip_array[octet_count++] = atoi(buffer); 
         }   
     }   
+    buffer[digit_count] = 0;    
     ip_array[octet_count] = atoi(buffer); 
 
     if(*arg++ == '/'){
@@ -161,7 +162,7 @@ static int __set_classful_mask(u_int32_t net_addr, int new_subnet_cidr, u_int32_
         fprintf(stderr, "Invalid IP address with CIDR mask\n");
         return 2;
     }
-    if(__invalid_network_addr(net_addr, *old_subnet)){
+    if(__invalid_network_addr(net_addr, cidr_to_32bit(new_subnet_cidr))){
         fprintf(stderr, "Invalid network address\n");
         return 2;
     }

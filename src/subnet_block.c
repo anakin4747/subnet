@@ -133,23 +133,22 @@ void subnet_block_print_address_ranges(subnet_block_t* subnet_block){
         u_int32_t broad_32;
 
         // Clear interesting octet
-        net_32 &= ~(0xFF << ((4 - interesting_octet) * 8)); // Might not need to do this step idk
-        broad_32 = net_32;
-
+        net_32 &= ~(0xFF << ((4 - interesting_octet) * 8));
 
         // Set interesting octet
         net_32 |= (u_int8_t)(block_size * i) << ((4 - interesting_octet) * 8);
-        broad_32 |= (u_int8_t)((block_size * (i + 1)) - 1) << ((4 - interesting_octet) * 8);
+        broad_32 = net_32 | ~ip_addr_get_32bit_value(subnet_block->new_subnet_mask);
 
         ip_addr_constructor(net_ip, net_32);
         ip_addr_constructor(broad_ip, broad_32);
         ip_addr_constructor(first_usable_ip, net_32 + 1);
-        ip_addr_constructor(last_usable_ip, broad_32 -1);
+        ip_addr_constructor(last_usable_ip, broad_32 - 1);
 
 
         printf("\nSubnet: ");
         ip_addr_print_dotted_decimal(net_ip);
-        printf("\n  Directed Broadcast Address: ");
+        printf("/%d\n", subnet_block->new_mask_cidr);
+        printf("  Directed Broadcast Address: ");
         ip_addr_print_dotted_decimal(broad_ip);
         printf("\n    Usable Address Range: ");
         ip_addr_print_dotted_decimal(first_usable_ip);

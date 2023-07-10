@@ -32,6 +32,20 @@ static bool_t __invalid_ip_addr(char* ip_addr, const char* ip_exp){
     return 0;
 }
 
+// Validation function
+static bool_t __invalid_32bit_mask(u_int32_t mask_32){
+    int i;
+    for(i = 0; (mask_32 & 1) == 0; mask_32 >>= 1, i++){ }
+    for(; (mask_32 & 1); mask_32 >>= 1, i++){ }
+
+    return i == 32 ? 0 : 1;
+}
+
+// Validation function
+static bool_t __invalid_network_addr(u_int32_t net_addr, u_int32_t old_mask){
+    return (net_addr & ~old_mask);
+}
+
 // Private function
 static int __ip_string_to_uint32(char* arg, u_int8_t* ip_array){
     int digit_count = 0;    
@@ -66,7 +80,8 @@ static int __ip_string_to_uint32(char* arg, u_int8_t* ip_array){
 // Get old subnet and check that new subnet < old subnet
 // This can be used for cases 1, 2, 4, and 6
 // Private function
-static int __set_classful_mask(u_int8_t first_octet, int new_subnet_cidr, u_int32_t* old_subnet){
+static int __set_classful_mask(u_int32_t net_addr, int new_subnet_cidr, u_int32_t* old_subnet){
+    u_int8_t first_octet = net_addr >> 24;
 
     if(first_octet <= 126){
         if(new_subnet_cidr < 8){
@@ -90,16 +105,11 @@ static int __set_classful_mask(u_int8_t first_octet, int new_subnet_cidr, u_int3
         fprintf(stderr, "Invalid IP address with CIDR mask\n");
         return 2;
     }
+    if(__invalid_network_addr(net_addr, *old_subnet)){
+        fprintf(stderr, "Invalid network address\n");
+        return 2;
+    }
     return 0;
-}
-
-// Validation function
-bool_t __invalid_32bit_mask(u_int32_t mask_32){
-    int i;
-    for(i = 0; (mask_32 & 1) == 0; mask_32 >>= 1, i++){ }
-    for(; (mask_32 & 1); mask_32 >>= 1, i++){ }
-
-    return i == 32 ? 0 : 1;
 }
 
 // Public function
@@ -120,7 +130,7 @@ int process_input_ip_and_mask(char* arg1, char* arg2, u_int32_t* ip_addr, u_int3
         *new_subnet = cidr_to_32bit(new_subnet_cidr);
 
         // Set old subnet from a classful IP address and propagate error codes
-        return __set_classful_mask(ip_array[0], new_subnet_cidr, old_subnet);
+        return __set_classful_mask(*ip_addr, new_subnet_cidr, old_subnet);
 
     } else {
         // Case 2 or 3
@@ -153,7 +163,7 @@ int process_input_ip_and_mask(char* arg1, char* arg2, u_int32_t* ip_addr, u_int3
         if(old_subnet_cidr == -1){
             // Case 2
             // Set old subnet from a classful IP address and propagate error codes
-            return __set_classful_mask(ip_array[0], new_subnet_cidr, old_subnet);
+            return __set_classful_mask(*ip_addr, new_subnet_cidr, old_subnet);
         } else {
             // Case 3
             *old_subnet = cidr_to_32bit(old_subnet_cidr);

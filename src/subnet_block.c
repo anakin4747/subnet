@@ -4,6 +4,7 @@
 #include <math.h>
 
 #include "ip_addr.h"
+#include "helper_functions.h"
 
 // Subnet block class
 typedef struct {
@@ -32,12 +33,6 @@ static int __calculate_hosts_per_subnet(int mask_cidr){
     return (int)(pow(2, (32 - mask_cidr)) - 2);
 }
 
-static int __convert_32_mask_to_cdir(u_int32_t mask_32){
-    int num_of_zeros;
-    for(num_of_zeros = 0; (mask_32 & 1) == 0; num_of_zeros++, mask_32 >>= 1){ }
-    return 32 - num_of_zeros;
-}
-
 static char __class_from_first_octet(struct ip_addr_t* ip_addr){
     u_int8_t first_octet = ip_addr_get_octet(ip_addr, 1);
 
@@ -64,13 +59,13 @@ void subnet_block_constructor(subnet_block_t* subnet_block,
     subnet_block->new_subnet_mask = ip_addr_malloc();
     subnet_block->old_subnet_mask = ip_addr_malloc();
     ip_addr_constructor(subnet_block->network_addr, net_addr_32);
-    ip_addr_constructor(subnet_block->broadcast_addr, net_addr_32 | ~new_mask_32);
+    ip_addr_constructor(subnet_block->broadcast_addr, net_addr_32 | ~old_mask_32);
     ip_addr_constructor(subnet_block->new_subnet_mask, new_mask_32);
     ip_addr_constructor(subnet_block->old_subnet_mask, old_mask_32);
 
     // Save CIDR subnet mask
-    subnet_block->new_mask_cidr = __convert_32_mask_to_cdir(new_mask_32);
-    subnet_block->old_mask_cidr = __convert_32_mask_to_cdir(old_mask_32);
+    subnet_block->new_mask_cidr = convert_32_mask_to_cdir(new_mask_32);
+    subnet_block->old_mask_cidr = convert_32_mask_to_cdir(old_mask_32);
 
     // Calculate number of subnets
     subnet_block->num_of_subnets = __calculate_num_of_subnets(subnet_block->new_mask_cidr, subnet_block->old_mask_cidr);
@@ -138,31 +133,19 @@ void subnet_block_print_address_ranges(subnet_block_t* subnet_block){
     // Printing network, broadcast, and usable addresses
     for(int i = 0; i < subnet_block->num_of_subnets; i++){
         int fourth_octet = ip_addr_get_octet(subnet_block->network_addr, interesting_octet) + (block_size * i);
-        printf("\nSubnet: %s%d\n"
+        printf("\nSubnet: %s%d/%d\n"
                "  Directed broadcast address: %s%d\n"
-               "    Useable address range: %s%d - %s%d\n", 
-               octet_buffer, fourth_octet,
+               "    Usable address range: %s%d - %s%d\n", 
+               octet_buffer, fourth_octet, subnet_block->new_mask_cidr,
                   octet_buffer, fourth_octet + block_size - 1,
                     octet_buffer, fourth_octet + 1, octet_buffer, fourth_octet + block_size - 2);
     }
     printf("\n");
 }
 
-int subnet_block_get_hosts_per_subnet(subnet_block_t* subnet_block){
-    return subnet_block->hosts_per_subnet;
-}
-
-int subnet_block_get_num_of_subnets(subnet_block_t* subnet_block){
-    return subnet_block->num_of_subnets;
-}
-
-// u_int32_t dotted_decimal_to_32bit(u_int8_t first, u_int8_t second, u_int8_t third, u_int8_t fourth){
-//     return (first << 24) | (second << 16) | (third << 8) | (fourth);
-// }
-
 // Testing purposes
 // int main(){
-//     // // printf("%d\n", __convert_32_mask_to_cdir(0xFFFFFF00));
+//     // // printf("%d\n", convert_32_mask_to_cdir(0xFFFFFF00));
 
 //     subnet_block_t* sn_blk = subnet_block_malloc();
 //     subnet_block_constructor(sn_blk, 

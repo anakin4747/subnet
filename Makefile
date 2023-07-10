@@ -19,6 +19,6 @@ $(BINARY): $(OBJECTS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	rm -rf $(BINARY) $(OBJECTS) $(DEPFILES) dist.tgz
+	rm -rf $(BINARY) $(OBJECTS) $(DEPFILES)
 
 -include $(DEPFILES)

@@ -121,25 +121,79 @@ void subnet_block_print_address_ranges(subnet_block_t* subnet_block){
     int block_size = 256 - ip_addr_get_octet(subnet_block->new_subnet_mask, interesting_octet);
     printf("Block size: %d\n", block_size);
 
-    char octet_buffer[12] = "";
-    char int_buffer[5] = "";
+    // Instead of making these strings maybe just convert this to actually creating 4 ip_addr_t per subnet
 
-    // Convert all but the interesting octet to a string
-    for(int i = 1; i < interesting_octet; i++){
-        sprintf(int_buffer, "%d.", ip_addr_get_octet(subnet_block->network_addr, i));
-        strcat(octet_buffer, int_buffer);
-    }
-
-    // Printing network, broadcast, and usable addresses
     for(int i = 0; i < subnet_block->num_of_subnets; i++){
-        int fourth_octet = ip_addr_get_octet(subnet_block->network_addr, interesting_octet) + (block_size * i);
-        printf("\nSubnet: %s%d/%d\n"
-               "  Directed broadcast address: %s%d\n"
-               "    Usable address range: %s%d - %s%d\n", 
-               octet_buffer, fourth_octet, subnet_block->new_mask_cidr,
-                  octet_buffer, fourth_octet + block_size - 1,
-                    octet_buffer, fourth_octet + 1, octet_buffer, fourth_octet + block_size - 2);
+        struct ip_addr_t* net_ip = ip_addr_malloc();
+        struct ip_addr_t* broad_ip = ip_addr_malloc();
+        struct ip_addr_t* first_usable_ip = ip_addr_malloc();
+        struct ip_addr_t* last_usable_ip = ip_addr_malloc();
+
+        u_int32_t net_32 = ip_addr_get_32bit_value(subnet_block->network_addr);
+        u_int32_t broad_32;
+
+        // Clear interesting octet
+        net_32 &= ~(0xFF << (4 - interesting_octet * 8)); // Might not need to do this step idk
+        broad_32 = net_32;
+
+
+        // Set interesting octet
+        net_32 |= (u_int8_t)(block_size * i) << ((4 - interesting_octet) * 8);
+        broad_32 |= (u_int8_t)((block_size * (i + 1)) - 1) << ((4 - interesting_octet) * 8);
+
+        ip_addr_constructor(net_ip, net_32);
+        ip_addr_constructor(broad_ip, broad_32);
+        ip_addr_constructor(first_usable_ip, net_32 + 1);
+        ip_addr_constructor(last_usable_ip, broad_32 -1);
+
+
+        printf("\nSubnet: ");
+        ip_addr_print_dotted_decimal(net_ip);
+        printf("\n  Directed Broadcast Address: ");
+        ip_addr_print_dotted_decimal(broad_ip);
+        printf("\n    Usable Address Range: ");
+        ip_addr_print_dotted_decimal(first_usable_ip);
+        printf(" - ");
+        ip_addr_print_dotted_decimal(last_usable_ip);
+        printf("\n");
+
+        ip_addr_destructor(net_ip);
+        ip_addr_destructor(broad_ip);
+        ip_addr_destructor(first_usable_ip);
+        ip_addr_destructor(last_usable_ip);
+
+        free(net_ip);
+        free(broad_ip);
+        free(first_usable_ip);
+        free(last_usable_ip);
     }
+    // char first_octets[20] = "";
+    // char last_octets[20] = "";
+    // char int_buffer[5] = "";
+
+    // // Convert the first octets leading up to the interesting octet to a string
+    // for(int i = 1; i < interesting_octet; i++){
+    //     sprintf(int_buffer, "%d.", ip_addr_get_octet(subnet_block->network_addr, i));
+    //     strcat(first_octets, int_buffer);
+    // }
+
+    // // Convert the remaining octets after the interesting octet
+    // for(int i = interesting_octet + 1; i <= 4; i++){
+    //     sprintf(int_buffer, "%d", ip_addr_get_octet(subnet_block->network_addr, i));
+    //     strcat(last_octets, int_buffer);
+    // }
+
+    // // Printing network, broadcast, and usable addresses
+    // for(int i = 0; i < subnet_block->num_of_subnets; i++){
+    //     int value_at_inter_octet = ip_addr_get_octet(subnet_block->network_addr, interesting_octet) + (block_size * i);
+    //     printf("\nSubnet: %s%d.%s/%d\n"
+    //            "  Directed broadcast address: %s%d.%s\n"
+    //            "    Usable address range: %s%d.%s - %s%d.%s\n", 
+    //            first_octets, value_at_inter_octet, last_octets, subnet_block->new_mask_cidr,
+    //               first_octets, value_at_inter_octet + block_size - 1, last_octets,
+    //                 first_octets, value_at_inter_octet + 1, last_octets,
+    //                 first_octets, value_at_inter_octet + block_size - 2, last_octets);
+    // }
     printf("\n");
 }
 

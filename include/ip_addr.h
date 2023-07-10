@@ -17,5 +17,6 @@ void ip_addr_destructor(struct ip_addr_t*);
 void ip_addr_print_dotted_decimal(struct ip_addr_t*);
 void ip_addr_print_binary(struct ip_addr_t*);
 u_int8_t ip_addr_get_octet(struct ip_addr_t*, int);
+u_int32_t ip_addr_get_32bit_value(struct ip_addr_t*);
 
 #endif // IP_ADDR_H

@@ -54,6 +54,10 @@ u_int8_t ip_addr_get_octet(ip_addr_t* ip_addr, int octet){
     return ip_addr->octet_array[4 - octet];
 }
 
+u_int32_t ip_addr_get_32bit_value(ip_addr_t* ip_addr){
+    return ip_addr->ip_32_bits;
+}
+
 // Testing purposes
 // int main(){
 //     ip_addr_t* ip_addr = ip_addr_malloc();

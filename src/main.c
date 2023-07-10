@@ -38,14 +38,19 @@ int main(int argc, char** argv){
         
     } else if(argc == 3){
         int length = strlen(argv[2]);
+        char last_char;
 
-        switch (argv[2][length - 1]){
+        switch (last_char = argv[2][length - 1]){
             case 'h':
             case 's':
                 // Case 4:
                 // subnet [Network address] [0-9]+(s|h)
                 // Case 5:
                 // subnet [Network address]/[Old CIDR mask] [0-9]+(s|h)
+                result = process_input_ip_and_mask(argv[1], NULL, &ip_addr, &new_subnet, &old_subnet);
+                if(result){
+                    exit(result);
+                }
                 break;
             default:
 
@@ -82,21 +87,21 @@ int main(int argc, char** argv){
 /*
 
 Input possibilities:
-    Case 1:
+    Case 1: - Implemented
     subnet [Network address]/[New CIDR mask]
 
         Notes:
             The old subnet mask is a classful mask determined from the first octet of the [Network address].
             The new subnet mask is in CIDR format.
 
-    Case 2:
+    Case 2: - Implemented
     subnet [Network address] [Dotted decimal subnet mask]
 
         Notes:
             The old subnet mask is a classful mask determined from the first octet of the [Network address].
             The new subnet mask is in dotted decimal notation.
 
-    Case 3:
+    Case 3: - Implemented
     subnet [Network address]/[Old CIDR mask] [New dotted decimal subnet mask]
 
         Notes:

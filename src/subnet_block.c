@@ -133,7 +133,7 @@ void subnet_block_print_address_ranges(subnet_block_t* subnet_block){
         u_int32_t broad_32;
 
         // Clear interesting octet
-        net_32 &= ~(0xFF << (4 - interesting_octet * 8)); // Might not need to do this step idk
+        net_32 &= ~(0xFF << ((4 - interesting_octet) * 8)); // Might not need to do this step idk
         broad_32 = net_32;
 
 
@@ -167,33 +167,6 @@ void subnet_block_print_address_ranges(subnet_block_t* subnet_block){
         free(first_usable_ip);
         free(last_usable_ip);
     }
-    // char first_octets[20] = "";
-    // char last_octets[20] = "";
-    // char int_buffer[5] = "";
-
-    // // Convert the first octets leading up to the interesting octet to a string
-    // for(int i = 1; i < interesting_octet; i++){
-    //     sprintf(int_buffer, "%d.", ip_addr_get_octet(subnet_block->network_addr, i));
-    //     strcat(first_octets, int_buffer);
-    // }
-
-    // // Convert the remaining octets after the interesting octet
-    // for(int i = interesting_octet + 1; i <= 4; i++){
-    //     sprintf(int_buffer, "%d", ip_addr_get_octet(subnet_block->network_addr, i));
-    //     strcat(last_octets, int_buffer);
-    // }
-
-    // // Printing network, broadcast, and usable addresses
-    // for(int i = 0; i < subnet_block->num_of_subnets; i++){
-    //     int value_at_inter_octet = ip_addr_get_octet(subnet_block->network_addr, interesting_octet) + (block_size * i);
-    //     printf("\nSubnet: %s%d.%s/%d\n"
-    //            "  Directed broadcast address: %s%d.%s\n"
-    //            "    Usable address range: %s%d.%s - %s%d.%s\n", 
-    //            first_octets, value_at_inter_octet, last_octets, subnet_block->new_mask_cidr,
-    //               first_octets, value_at_inter_octet + block_size - 1, last_octets,
-    //                 first_octets, value_at_inter_octet + 1, last_octets,
-    //                 first_octets, value_at_inter_octet + block_size - 2, last_octets);
-    // }
     printf("\n");
 }
 

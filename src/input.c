@@ -71,6 +71,7 @@ static bool_t __invalid_max_s_or_h(char* arg){
 }
 
 // Private function
+// Cases 4 & 5
 static int __process_max_expression(char* arg, int old_mask_cidr){
     char buffer[11];
     int i, max_number;

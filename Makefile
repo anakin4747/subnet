@@ -1,4 +1,5 @@
 BINARY = subnet
+INSTALLDIR = /usr/local/bin
 CODEDIRS = src
 INCDIRS = include
 CC = gcc
@@ -21,5 +22,11 @@ $(BINARY): $(OBJECTS)
 
 clean:
 	rm -rf $(BINARY) $(OBJECTS) $(DEPFILES)
+
+install: $(BINARY)
+	install -m 755 $(BINARY) $(INSTALLDIR)
+
+uninstall:
+	rm $(INSTALLDIR)/$(BINARY)
 
 -include $(DEPFILES)

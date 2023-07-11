@@ -172,7 +172,7 @@ static int __set_classful_mask(u_int32_t net_addr, int new_subnet_cidr, u_int32_
 
 // This could use some refactoring once more cases are working
 // Public function
-int process_input_ip_and_mask(char* arg1, char* arg2, u_int32_t* ip_addr, u_int32_t* new_subnet, u_int32_t* old_subnet){
+int process_input_ip_and_masks(char* arg1, char* arg2, u_int32_t* ip_addr, u_int32_t* new_subnet, u_int32_t* old_subnet){
     if(arg2 == NULL){
         // Case 1
         if(__invalid_ip_addr(arg1, IP_ADDR_W_CIDR_REGEX)){
@@ -259,6 +259,10 @@ int process_input_ip_and_mask(char* arg1, char* arg2, u_int32_t* ip_addr, u_int3
             return __set_classful_mask(*ip_addr, new_subnet_cidr, old_subnet);
         } else {
             // Case 3
+            if(old_subnet_cidr > new_subnet_cidr){
+                fprintf(stderr, "Invalid subnet mask\n");
+                return 3;
+            }
             *old_subnet = cidr_to_32bit(old_subnet_cidr);
         }
     }

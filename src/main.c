@@ -102,23 +102,21 @@ int main(int argc, char** argv){
         exit(1);
     } else if(argc == 2){
         // Case 1:
-        result = process_input_ip_and_mask(argv[1], NULL, &ip_addr, &new_subnet, &old_subnet);
-        if(result){
-            exit(result);
-        }
-        
+        argv[2] = NULL;
     } else if(argc == 3){
         // Case 2 & 3:
-        result = process_input_ip_and_mask(argv[1], argv[2], &ip_addr, &new_subnet, &old_subnet);
-        if(result){
-            exit(result);
-        }
     } else {
+        // argv[2] = NULL;
         // Case 6:
         // subnet [Network address] ([0-9]*s:[0-9]*(i|h))+
         // Case 7:
         // subnet [Network address]/[Old CIDR mask] ([0-9]*s:[0-9]*(i|h))+
         return 0;
+    }
+
+    result = process_input_ip_and_masks(argv[1], argv[2], &ip_addr, &new_subnet, &old_subnet);
+    if(result){
+        exit(result);
     }
     // This is common for cases 1-5
     struct subnet_block_t* subnet_block = subnet_block_malloc();

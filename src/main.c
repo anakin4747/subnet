@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "subnet_block.h"
 #include "input.h"
@@ -59,7 +58,7 @@ int main(int argc, char** argv){
                "\n"
                "    Examples:\n"
                "      subnet 192.168.0.0/25 255.255.255.192      # Old subnet mask is 25, new is 26\n"
-               "      subnet 10.0.0.0/9 255.192.0.0             # Old subnet mask is 9, new is 10\n"
+               "      subnet 10.0.0.0/9 255.192.0.0              # Old subnet mask is 9, new is 10\n"
                "\n"
                "-----------------------------------------------------------------------------------------------------------------------"
                "\n"
@@ -103,7 +102,6 @@ int main(int argc, char** argv){
         exit(1);
     } else if(argc == 2){
         // Case 1:
-        // subnet [Network address]/[New CIDR mask]
         result = process_input_ip_and_mask(argv[1], NULL, &ip_addr, &new_subnet, &old_subnet);
         if(result){
             exit(result);
@@ -150,7 +148,7 @@ Input possibilities:
             subnet 192.168.0.0/25       # Old subnet mask is 24, new is 25
             subnet 10.0.0.0/10          # Old subnet mask is 8, new is 10
 
-    Case 2 (Classful & Dotted Decimal): - Implemented
+    Case 2 (Classful & Dotted Decimal):
     subnet [Network address] [Dotted decimal subnet mask]
 
         Notes:

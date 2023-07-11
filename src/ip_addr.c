@@ -9,7 +9,7 @@ typedef struct {
     };
 } ip_addr_t;
 // I know its only a union in a struct which could just be a union
-// But making the object attributes all structs provides some nice consistancy
+// But making the object attributes all structs provides some nice consistency
 
 // Memory allocator
 ip_addr_t* ip_addr_malloc(void){

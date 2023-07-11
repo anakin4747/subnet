@@ -222,6 +222,14 @@ int process_input_ip_and_masks(char* arg1, char* arg2, u_int32_t* ip_addr, u_int
             return __set_classful_mask(*ip_addr, new_subnet_cidr, old_subnet);
         } else {
             // Case 5
+            if(old_subnet_cidr > new_subnet_cidr){
+                fprintf(stderr, "Invalid subnet mask\n");
+                return 3;
+            }
+            if(__invalid_network_addr(*ip_addr, *new_subnet)){
+                fprintf(stderr, "Invalid network address\n");
+                return 2;
+            }
             *old_subnet = cidr_to_32bit(old_subnet_cidr);
         }
 
@@ -262,6 +270,10 @@ int process_input_ip_and_masks(char* arg1, char* arg2, u_int32_t* ip_addr, u_int
             if(old_subnet_cidr > new_subnet_cidr){
                 fprintf(stderr, "Invalid subnet mask\n");
                 return 3;
+            }
+            if(__invalid_network_addr(*ip_addr, *new_subnet)){
+                fprintf(stderr, "Invalid network address\n");
+                return 2;
             }
             *old_subnet = cidr_to_32bit(old_subnet_cidr);
         }

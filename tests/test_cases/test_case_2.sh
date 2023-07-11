@@ -71,6 +71,7 @@ else
     tests_failed=$((tests_failed + 1))
     echo Case 2, Class B, Invalid Mask Test Failed
 fi
+
 ### Invalid Network Address
 ./subnet 129.0.0.1 255.255.128.0 2>&1 | grep -i "Invalid network address" > /dev/null
 if [ $? -eq 0 ]; then
@@ -90,6 +91,7 @@ else
     tests_failed=$((tests_failed + 1))
     echo Case 2, Class C, Invalid IP Address Test Failed
 fi
+
 ### Invalid Dotted Decimal Subnet Mask
 ./subnet 198.0.0.0 255.255.255. 2>&1 | grep -i "Invalid dotted decimal mask" > /dev/null
 if [ $? -eq 0 ]; then
@@ -98,6 +100,7 @@ else
     tests_failed=$((tests_failed + 1))
     echo Case 2, Class C, Invalid Dotted Decimal Mask Test Failed
 fi
+
 ### Invalid Mask
 ./subnet 198.0.0.0 255.255.254.0 2>&1 | grep -i "Invalid subnet mask" > /dev/null
 if [ $? -eq 0 ]; then
@@ -106,6 +109,7 @@ else
     tests_failed=$((tests_failed + 1))
     echo Case 2, Class C, Invalid Mask Test Failed
 fi
+
 ### Invalid Network Address
 ./subnet 198.0.0.1 255.255.255.192 2>&1 | grep -i "Invalid network address" > /dev/null
 if [ $? -eq 0 ]; then

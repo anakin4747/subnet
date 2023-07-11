@@ -44,6 +44,7 @@ else
     tests_failed=$((tests_failed + 1))
     echo Case 1, Class B, Invalid IP Address Test Failed
 fi
+
 ### Invalid Mask
 ./subnet 129.0.0.0/15 2>&1 | grep -i "Invalid subnet mask" > /dev/null
 if [ $? -eq 0 ]; then
@@ -52,6 +53,7 @@ else
     tests_failed=$((tests_failed + 1))
     echo Case 1, Class B, Invalid CIDR Mask Test Failed
 fi
+
 ### Invalid Network Address
 ./subnet 129.0.0.1/17 2>&1 | grep -i "Invalid network address" > /dev/null
 if [ $? -eq 0 ]; then
@@ -71,6 +73,7 @@ else
     tests_failed=$((tests_failed + 1))
     echo Case 1, Class C, Invalid IP Address Test Failed
 fi
+
 ### Invalid Mask
 ./subnet 198.0.0.0/23 2>&1 | grep -i "Invalid subnet mask" > /dev/null
 if [ $? -eq 0 ]; then
@@ -79,6 +82,7 @@ else
     tests_failed=$((tests_failed + 1))
     echo Case 1, Class C, Invalid CIDR Mask Test Failed
 fi
+
 ### Invalid Network Address
 ./subnet 198.0.0.1/25 2>&1 | grep -i "Invalid network address" > /dev/null
 if [ $? -eq 0 ]; then

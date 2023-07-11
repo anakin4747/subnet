@@ -11,6 +11,7 @@ OBJECTS = $(patsubst %.c, %.o, $(CFILES))
 DEPFILES = $(patsubst %.c, %.d, $(CFILES))
 
 all: $(BINARY)
+	./tests/test.sh
 
 $(BINARY): $(OBJECTS)
 	$(CC) -o $@ $^ $(INCLIBS)

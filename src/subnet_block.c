@@ -92,7 +92,7 @@ void subnet_block_destructor(subnet_block_t* subnet_block){
 
 void subnet_block_print(subnet_block_t* subnet_block){
 
-    printf("Number of subnets possible: %d\n"
+    printf("\nNumber of subnets possible: %d\n"
            "Number of hosts per subnet: %d\n"
            "New subnet mask in CIDR notation: %d\n"
            "Old subnet mask in CIDR notation: %d\n"
@@ -170,21 +170,23 @@ void subnet_block_print_address_ranges(subnet_block_t* subnet_block){
 }
 
 // Testing purposes
-// int main(){
-//     // // printf("%d\n", convert_32_mask_to_cdir(0xFFFFFF00));
+/*
+int main(){
+    // // printf("%d\n", convert_32_mask_to_cdir(0xFFFFFF00));
 
-//     subnet_block_t* sn_blk = subnet_block_malloc();
-//     subnet_block_constructor(sn_blk, 
-//                              dotted_decimal_to_32bit(192, 168, 0, 0),
-//                              dotted_decimal_to_32bit(255, 255, 255, 192),
-//                              dotted_decimal_to_32bit(255, 255, 255, 0));
+    subnet_block_t* sn_blk = subnet_block_malloc();
+    subnet_block_constructor(sn_blk, 
+                             dotted_decimal_to_32bit(192, 168, 0, 0),
+                             dotted_decimal_to_32bit(255, 255, 255, 192),
+                             dotted_decimal_to_32bit(255, 255, 255, 0));
 
-//     subnet_block_print(sn_blk);
-//     subnet_block_print_address_ranges(sn_blk);
+    subnet_block_print(sn_blk);
+    subnet_block_print_address_ranges(sn_blk);
 
 
-//     subnet_block_destructor(sn_blk);
-//     free(sn_blk);
+    subnet_block_destructor(sn_blk);
+    free(sn_blk);
 
-//     return 0;
-// }
+    return 0;
+}
+*/

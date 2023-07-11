@@ -121,6 +121,7 @@ static int __ip_string_to_uint32(char* arg, u_int8_t* ip_array){
             ip_array[octet_count++] = atoi(buffer); 
         }   
     }   
+    // Need to null terminate or else bug
     buffer[digit_count] = 0;    
     ip_array[octet_count] = atoi(buffer); 
 

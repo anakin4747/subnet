@@ -59,21 +59,23 @@ u_int32_t ip_addr_get_32bit_value(ip_addr_t* ip_addr){
 }
 
 // Testing purposes
-// int main(){
-//     ip_addr_t* ip_addr = ip_addr_malloc();
-//     // ip_addr_constructor(ip_addr, 3232235521);
-//     ip_addr_constructor(ip_addr, (192 << 24) | (168 << 16) | (0 << 8) | 1);
+/*
+int main(){
+    ip_addr_t* ip_addr = ip_addr_malloc();
+    // ip_addr_constructor(ip_addr, 3232235521);
+    ip_addr_constructor(ip_addr, (192 << 24) | (168 << 16) | (0 << 8) | 1);
 
-//     printf("Dotted decimal notation: ");
-//     ip_addr_print_dotted_decimal(ip_addr);
-//     printf("Binary notation: ");
-//     ip_addr_print_binary(ip_addr);
-//     for(int i = 1; i < 5; i++){
-//         printf("Octet %d: %d\n", i, ip_addr_get_octet(ip_addr, i));
-//     }
+    printf("Dotted decimal notation: ");
+    ip_addr_print_dotted_decimal(ip_addr);
+    printf("Binary notation: ");
+    ip_addr_print_binary(ip_addr);
+    for(int i = 1; i < 5; i++){
+        printf("Octet %d: %d\n", i, ip_addr_get_octet(ip_addr, i));
+    }
 
-//     ip_addr_destructor(ip_addr);
-//     free(ip_addr);
+    ip_addr_destructor(ip_addr);
+    free(ip_addr);
 
-//     return 0;
-// }
+    return 0;
+}
+*/

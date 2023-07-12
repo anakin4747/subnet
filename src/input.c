@@ -72,9 +72,24 @@ static bool_t __invalid_max_s_or_h(char* arg){
 
 // Private function
 // Cases 4 & 5
-static int __process_max_expression(char* arg, int old_mask_cidr){
+static int __process_max_expression(u_int32_t net_addr, char* arg, int old_mask_cidr){
+    if(old_mask_cidr == -1){
+        u_int8_t first_octet = net_addr >> 24;
+
+        if(first_octet <= 126){
+            old_mask_cidr = 8;
+        } else if(first_octet >= 128 && first_octet <= 191){
+            old_mask_cidr = 16;
+        } else if(first_octet >= 192 && first_octet <= 223){
+            old_mask_cidr = 24;
+        } else {
+            fprintf(stderr, "Invalid IP address\n");
+            return 2;
+        }
+    }
+
     char buffer[11];
-    int i, max_number;
+    int i, max_number, new_subnet_cidr;
 
     for(i = 0; isdigit(arg[i]); i++){
         buffer[i] = arg[i];
@@ -90,12 +105,14 @@ static int __process_max_expression(char* arg, int old_mask_cidr){
         case 's':
             int borrowed_bits;
             for(borrowed_bits = 1; (pow(2, borrowed_bits) < max_number); borrowed_bits++){ }
-            return old_mask_cidr + borrowed_bits;
+            new_subnet_cidr = old_mask_cidr + borrowed_bits;
+            return new_subnet_cidr > 30 ? -1 : new_subnet_cidr;
             break;
         case 'h':
             int host_bits;
             for(host_bits = 2; ((pow(2, host_bits) - 2) < max_number); host_bits++){ }
-            return 32 - host_bits;
+            new_subnet_cidr = 32 - host_bits;
+            return new_subnet_cidr == old_mask_cidr ? -1 : new_subnet_cidr;
             break;
         default:
             break;
@@ -208,7 +225,7 @@ int process_input_ip_and_masks(char* arg1, char* arg2, u_int32_t* ip_addr, u_int
         *ip_addr = dotted_decimal_to_32bit(ip_array[0], ip_array[1], ip_array[2], ip_array[3]);
 
         // Process second argument and return new subnet
-        int new_subnet_cidr = __process_max_expression(arg2, old_subnet_cidr);
+        int new_subnet_cidr = __process_max_expression(*ip_addr, arg2, old_subnet_cidr);
 
         if(new_subnet_cidr < 0){
             fprintf(stderr, "Error processing max expression\n");

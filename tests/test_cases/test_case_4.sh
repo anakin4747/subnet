@@ -16,7 +16,7 @@ else
 fi
 
 ### Invalid Subnet Mask From too Many Hosts
-./subnet 10.0.0.0 16777215h 2>&1 | grep -i "Invalid subnet mask" > /dev/null
+./subnet 10.0.0.0 8388607h 2>&1 | grep -i "Error processing max expression" > /dev/null
 if [ $? -eq 0 ]; then
     tests_passed=$((tests_passed + 1))
 else
@@ -25,28 +25,61 @@ else
 fi
 
 ### Invalid Subnet Mask From too Many Subnets
-./subnet 10.0.0.0 16777215h 2>&1 | grep -i "Invalid subnet mask" > /dev/null
+./subnet 10.0.0.0 4194305s 2>&1 | grep -i "Error processing max expression" > /dev/null
 if [ $? -eq 0 ]; then
     tests_passed=$((tests_passed + 1))
 else
     tests_failed=$((tests_failed + 1))
-    echo Case 4, Class A, Invalid Mask From Too Many Hosts Test Failed 
+    echo Case 4, Class A, Invalid Mask From Too Many Subnets Test Failed 
+fi
+
+### Invalid Network Address
+./subnet 10.0.0.1 100h 2>&1 | grep -i "Invalid network address"  > /dev/null
+if [ $? -eq 0 ]; then
+    tests_passed=$((tests_passed + 1))
+else
+    tests_failed=$((tests_failed + 1))
+    echo Case 4, Class A, Invalid Network Address Test Failed
+fi
+
+## Class B
+### Working               ---TODO---
+### Invalid IP Address
+./subnet 129.0.0. 100h 2>&1 | grep -i "Invalid IP address" > /dev/null
+if [ $? -eq 0 ]; then
+    tests_passed=$((tests_passed + 1))
+else
+    tests_failed=$((tests_failed + 1))
+    echo Case 4, Class B, Invalid IP Address Test Failed
+fi
+
+### Invalid Subnet Mask From too Many Hosts
+./subnet 129.0.0.0 32767h 2>&1 | grep -i "Error processing max expression" > /dev/null
+if [ $? -eq 0 ]; then
+    tests_passed=$((tests_passed + 1))
+else
+    tests_failed=$((tests_failed + 1))
+    echo Case 4, Class B, Invalid Mask From Too Many Hosts Test Failed 
+fi
+
+### Invalid Subnet Mask From too Many Subnets
+./subnet 129.0.0.0 16385s 2>&1 | grep -i "Error processing max expression" > /dev/null
+if [ $? -eq 0 ]; then
+    tests_passed=$((tests_passed + 1))
+else
+    tests_failed=$((tests_failed + 1))
+    echo Case 4, Class B, Invalid Mask From Too Many Subnets Test Failed 
 fi
 
 # ### Invalid Network Address
-# ./subnet 10.0.0.1/9 255.192.0.0 2>&1 | grep -i "Invalid network address"  > /dev/null
+# ./subnet 10.0.0.1 100h 2>&1 | grep -i "Invalid network address"  > /dev/null
 # if [ $? -eq 0 ]; then
 #     tests_passed=$((tests_passed + 1))
 # else
 #     tests_failed=$((tests_failed + 1))
-#     echo Case 4, Class A, Invalid Network Address Test Failed
+#     echo Case 4, Class B, Invalid Network Address Test Failed
 # fi
 
-# ### Invalid Max Expression
-
-# ## Class B
-# ### Working               ---TODO---
-# ### Invalid IP Address
 # ./subnet 129.0.0./17 255.255.224.0 2>&1 | grep -i "Invalid IP address" > /dev/null
 # if [ $? -eq 0 ]; then
 #     tests_passed=$((tests_passed + 1))

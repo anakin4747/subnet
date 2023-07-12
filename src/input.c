@@ -37,6 +37,7 @@ static bool_t __invalid_ip_addr(char* ip_addr, const char* ip_exp){
 
 // Validation function
 static bool_t __invalid_32bit_mask(u_int32_t mask_32){
+    // Would love a replacement thats just boolean logic instead so that its shorter
     int i;
     for(i = 0; (mask_32 & 1) == 0; mask_32 >>= 1, i++){ }
     for(; (mask_32 & 1); mask_32 >>= 1, i++){ }

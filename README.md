@@ -14,6 +14,7 @@ There is a make target for installing the program so you can just clone this rep
 # Some Thoughts
 
 Some things I want to implement in the future:
+
     - Cases 6 & 7 which will require multiple subnet calculations (possibly utilizing recursion)
     - More advanced forms of testing
     - Add test cases for logically correct addresses (not just checking that all invalid inputs error out correctly)

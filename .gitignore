@@ -3,5 +3,5 @@ subnet
 *oldCode
 *.d
 *.o
-notes
+*notes
 __pycache__

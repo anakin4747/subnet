@@ -109,7 +109,7 @@ static int __process_max_expression(char* arg, int old_mask_cidr){
             // Find the number of host_bits needed for that many host per subnet
             for(host_bits = 2; ((pow(2, host_bits) - 2) < max_number); host_bits++){ }
             new_subnet_cidr = 32 - host_bits;
-            return new_subnet_cidr == old_mask_cidr ? -1 : new_subnet_cidr;
+            return new_subnet_cidr <= old_mask_cidr ? -1 : new_subnet_cidr;
             break;
         default:
             break;
@@ -254,11 +254,11 @@ int process_input_ip_and_masks(char* arg1, char* arg2, u_int32_t* ip_addr, u_int
 
     // Validate new mask - maybe move to a function
     if(old_subnet_cidr > new_subnet_cidr){
-        fprintf(stderr, "Invalid CIDR mask, smaller than classful mask\n"); 
+        fprintf(stderr, "Invalid CIDR mask, smaller than old mask\n"); 
         return 3;
 
     } else if(old_subnet_cidr == new_subnet_cidr){
-        fprintf(stderr, "Invalid CIDR mask, same as classful mask\n");
+        fprintf(stderr, "Invalid CIDR mask, same as old mask\n");
         return 3;
     }
 

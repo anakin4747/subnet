@@ -22,6 +22,8 @@ with open("tests_py/test_cases.csv", "r") as test_cases:
     reader = csv.DictReader(test_cases, delimiter=',')
 
     for line in reader:
+        if line["Case"] == "#":
+            break
         tests_ran += 1
         tests_failed += invalid_error_test(case=line["Case"],
                                            _class=line["Class"],

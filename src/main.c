@@ -73,7 +73,7 @@ int main(int argc, char** argv){
                "      of the [Network address].\n"
                "\n"
                "    Examples:\n"
-               "      subnet 192.168.0.0 100s     # Calculate a new subnet mask to accommodate at least 100 subnets with the maximum\n"
+               "      subnet 192.168.0.0 60s      # Calculate a new subnet mask to accommodate at least 100 subnets with the maximum\n"
                "                                  # hosts per subnet possible. The old subnet is calculated from the class.\n"
                "\n"
                "      subnet 10.0.0.0 100h        # Calculate a new subnet mask to accommodate at least 100 hosts with the maximum\n"

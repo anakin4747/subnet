@@ -4,3 +4,4 @@ subnet
 *.d
 *.o
 notes
+__pycache__

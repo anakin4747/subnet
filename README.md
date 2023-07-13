@@ -26,17 +26,7 @@ Some things I want to implement in the future:
 
 # Testing
 
-Currently I have a series of scripts used for testing all invalid input I can think of. These bash scripts can be found in tests. There is a parent script, tests/test.sh, which runs a script for every input case, tests/test_cases/test_case_{1..5}.sh . I specified in the make file to run the parent test script every build so errors can be automatically detected. 
-
-    tests/
-    ├── test_cases
-    │   ├── test_case_1.sh
-    │   ├── test_case_2.sh
-    │   ├── test_case_3.sh
-    │   ├── test_case_4.sh
-    │   └── test_case_5.sh
-    └── test.sh
-
+The python script tests_py/test.py processes a list of tests to be performed. The list of tests are in the tests_py/test_cases.csv file. I added this python script to the default make target so errors are detected automatically.
 
 ## Input possibilities:
 ### Case 1 (Classful & CIDR):
@@ -79,7 +69,7 @@ The old subnet mask is in CIDR format. The new subnet mask is in dotted decimal 
 Examples:
 
     subnet 192.168.0.0/25 255.255.255.192      # Old subnet mask is 25, new is 26
-    subnet 10.0.0.0/9 255.192.0.0             # Old subnet mask is 9, new is 10
+    subnet 10.0.0.0/9 255.192.0.0              # Old subnet mask is 9, new is 10
 
 
 ### Case 4 (Classful Maximum Subnets|Hosts):

@@ -1,0 +1,44 @@
+As a hiring manager for an embedded software engineering position, here's my critique of the provided README.md file:
+
+1. Lack of Introduction: The README.md should start with a concise introduction that provides an overview of the project. 
+It should briefly explain what the project does, its purpose, and its significance in the context of subnetting concepts.
+
+2. Project Description: While you mention that the project is a command-line tool for calculating subnets, it would be 
+helpful to include a brief explanation of how the tool works and what specific subnetting calculations it can perform. 
+This would give potential users a clearer understanding of the project's capabilities.
+
+3. Object-Oriented Programming (OOP) in C: While it's commendable that you've attempted to implement OOP concepts in C,
+it would be beneficial to provide a brief explanation of how you achieved this in the project. Mentioning the specific
+OOP practices or design patterns you used, along with their benefits, would help demonstrate your understanding of software
+engineering principles.
+
+4. Installation Instructions: The README.md should provide clear and concise instructions on how to install and run the
+project. While you mention a make target for installation, it would be helpful to include step-by-step instructions,
+including any prerequisites or dependencies that need to be satisfied.
+
+5. Future Plans: It's great that you have outlined some future plans for the project. However, instead of just listing them,
+provide a brief explanation of each planned feature or improvement. This will showcase your ability to think ahead and your
+commitment to continuously enhancing the project.
+
+6. Testing: The section on testing is informative, but it could be more organized and easier to understand. Consider
+providing a brief explanation of the testing approach you have adopted and the importance of thorough testing in a project
+like this. Additionally, it would be helpful to include information on how to run the tests and interpret the results.
+
+7. Input Possibilities: The section describing the different input cases is well-documented, providing clear examples and
+explanations. However, consider reformatting the examples to improve readability. You could use code blocks or tables to
+present the examples in a structured manner.
+
+8. Examples: The examples provided are useful in showcasing the expected output of the program. Consider organizing the
+examples in a consistent format, such as using code blocks, and provide a brief explanation of what each example demonstrates.
+
+9. Documentation: While the README.md contains information on how to use the program, it would be beneficial to provide
+additional documentation on the internal workings of the code. This could include explanations of the major functions,
+data structures used, and any design decisions made.
+
+10. Overall Structure and Formatting: The README.md could benefit from better organization and formatting. Consider using
+headings, subheadings, bullet points, and code blocks to improve the structure and readability of the document. This will
+make it easier for potential users and contributors to navigate and understand the information provided.
+
+Remember that the README.md serves as the primary source of information for potential users and contributors of the project.
+It should provide a clear understanding of the project's purpose, how to use it, and any relevant details needed to contribute
+or extend the project.

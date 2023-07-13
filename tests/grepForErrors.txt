@@ -1,1 +1,0 @@
-grep "fprintf" -n src/* > tests/error-possiblities.txt

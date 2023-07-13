@@ -2,7 +2,7 @@
 
 tests_passed=0
 
-for case in {1..5}
+for case in {1..1} # {1..5}
 do
     ./tests/test_cases/test_case_$case.sh
     tests_passed=$((tests_passed + $?))

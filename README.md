@@ -20,7 +20,7 @@ Some things I want to implement in the future:
     - Add test cases for logically correct addresses (not just checking that all invalid inputs error out correctly)
     - Retrieving subnet info given a specific node within the subnet
     - Refactoring src/input.c:process_input_ip_and_masks() so that there is less code repetition
-    - Switches to choose output information (remember to look at other programs like nmap or ps to learn best practices)
+    - Switches to choose output information
     - Adding a switch to print binary representation
 
 

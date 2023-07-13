@@ -73,31 +73,18 @@ static bool_t __invalid_max_s_or_h(char* arg){
 
 // Private function
 // Cases 4 & 5
-static int __process_max_expression(u_int32_t net_addr, char* arg, int old_mask_cidr){
-    if(old_mask_cidr == -1){
-        u_int8_t first_octet = net_addr >> 24;
-
-        if(first_octet <= 126){
-            old_mask_cidr = 8;
-        } else if(first_octet >= 128 && first_octet <= 191){
-            old_mask_cidr = 16;
-        } else if(first_octet >= 192 && first_octet <= 223){
-            old_mask_cidr = 24;
-        } else {
-            fprintf(stderr, "Invalid IP address\n");
-            return 2;
-        }
-    }
-
+// Returns new_subnet_cidr if possible otherwise returns -1
+static int __process_max_expression(char* arg, int old_mask_cidr){
     char buffer[11];
     int i, max_number, new_subnet_cidr;
 
+    // Process digits in front of s or h
     for(i = 0; isdigit(arg[i]); i++){
         buffer[i] = arg[i];
     }
-    buffer[i] = '\0'; // i or i + 1?
+    buffer[i] = '\0'; // NULL terminate buffer
 
-    if(i == 0){
+    if(i == 0){ // If no digit
         max_number = 1; // Would this make sense as an input? just s or h
     } else {
         max_number = atoi(buffer);
@@ -105,12 +92,14 @@ static int __process_max_expression(u_int32_t net_addr, char* arg, int old_mask_
     switch (arg[i]){
         case 's':
             int borrowed_bits;
+            // Find the number of borrowed_bits needed for that many subnets
             for(borrowed_bits = 1; (pow(2, borrowed_bits) < max_number); borrowed_bits++){ }
             new_subnet_cidr = old_mask_cidr + borrowed_bits;
             return new_subnet_cidr > 30 ? -1 : new_subnet_cidr;
             break;
         case 'h':
             int host_bits;
+            // Find the number of host_bits needed for that many host per subnet
             for(host_bits = 2; ((pow(2, host_bits) - 2) < max_number); host_bits++){ }
             new_subnet_cidr = 32 - host_bits;
             return new_subnet_cidr == old_mask_cidr ? -1 : new_subnet_cidr;
@@ -122,9 +111,13 @@ static int __process_max_expression(u_int32_t net_addr, char* arg, int old_mask_
 }
 
 // Private function
-static int __ip_string_to_uint32(char* arg, u_int8_t* ip_array){
+// Converts a valid IP string to an array of 4 bytes (ip_array)
+// Saves class of IP based off first octet in char* class
+// Saves Subnet in subnet_cidr if CIDR notation is present, -1 otherwise
+static int __ip_string_to_array(char* arg, u_int8_t* ip_array, char* class, int* subnet_cidr, bool_t ip_not_mask){
     int digit_count = 0;    
     int octet_count = 0;    
+    int subnet_input;
     char buffer[4]; 
     // Iterate over the input   
     for(; *arg && *arg != '/'; arg++){   
@@ -144,158 +137,133 @@ static int __ip_string_to_uint32(char* arg, u_int8_t* ip_array){
     buffer[digit_count] = 0;    
     ip_array[octet_count] = atoi(buffer); 
 
-    if(*arg++ == '/'){
-        for(digit_count = 0; *arg; arg++){
-            buffer[digit_count++] = *arg;  
+    if(ip_not_mask){
+        if(*arg++ == '/'){
+            for(digit_count = 0; *arg; arg++){
+                buffer[digit_count++] = *arg;  
+            }
+            buffer[digit_count] = 0;
+            subnet_input = atoi(buffer); 
+            if(subnet_input > 30){
+                fprintf(stderr, "Invalid CIDR subnet mask\n");
+                return -3;
+            }
+            *subnet_cidr = subnet_input;
+        } else {
+            *subnet_cidr = -1;
         }
-        buffer[digit_count] = 0;
-        return atoi(buffer); // Returns subnet
     }
-    return -1;
-}
 
-// Get old subnet and check that new subnet < old subnet
-// This can be used for cases 1, 2, 4, and 6
-// Private function
-static int __set_classful_mask(u_int32_t net_addr, int new_subnet_cidr, u_int32_t* old_subnet){
-    u_int8_t first_octet = net_addr >> 24;
-
-    if(first_octet <= 126){
-        if(new_subnet_cidr < 8){
-            fprintf(stderr, "Invalid subnet mask\n");
-            return 3;
-        }
-        *old_subnet = cidr_to_32bit(8);
-    } else if(first_octet >= 128 && first_octet <= 191){
-        if(new_subnet_cidr < 16){
-            fprintf(stderr, "Invalid subnet mask\n");
-            return 3;
-        }
-        *old_subnet = cidr_to_32bit(16);
-    } else if(first_octet >= 192 && first_octet <= 223){
-        if(new_subnet_cidr < 24){
-            fprintf(stderr, "Invalid subnet mask\n");
-            return 3;
-        }
-        *old_subnet = cidr_to_32bit(24);
+    if(ip_array[0] <= 126){
+        *class = 'A';
+    } else if(ip_array[0] >= 128 && ip_array[0] <= 191){
+        *class = 'B';
+    } else if(ip_array[0] >= 192 && ip_array[0] <= 223){
+        *class = 'C';
     } else {
-        fprintf(stderr, "Invalid IP address with CIDR mask\n");
-        return 2;
-    }
-    if(__invalid_network_addr(net_addr, cidr_to_32bit(new_subnet_cidr))){
-        fprintf(stderr, "Invalid network address\n");
-        return 2;
+        if(ip_not_mask){
+            // Check if the dotted decimal string is an IP address instead of a mask
+            fprintf(stderr, "Invalid IP address based on first octet\n");
+            return -2;
+        }
     }
     return 0;
 }
 
-// This could use some refactoring once more cases are working
+static int __cidr_from_class(char class){
+    // 'A' = 8
+    // 'B' = 16
+    // 'C' = 24
+    return (int)((class - 'A' + 1) * 8);
+}
+
 // Public function
 int process_input_ip_and_masks(char* arg1, char* arg2, u_int32_t* ip_addr, u_int32_t* new_subnet, u_int32_t* old_subnet){
+
+    if(__invalid_ip_addr(arg1, IP_ADDR_REGEX) && __invalid_ip_addr(arg1, IP_ADDR_W_CIDR_REGEX)){
+        fprintf(stderr, "Invalid IP address\n");
+        return 2;
+    }
+
+    // Process arg1 for IP address and class
+    u_int8_t ip_array[4];
+    char class;
+    int result, input_cidr, old_subnet_cidr, new_subnet_cidr;
+
+    // Convert ip address from string to array 
+    // Save class & returning error if class D or E
+    // Save CIDR or -1 in input_cidr & returning error if CIDR > 30
+    result = __ip_string_to_array(arg1, ip_array, &class, &input_cidr, 1);
+    if(result){
+        return result;
+    }
+    // Set IP address
+    *ip_addr = dotted_decimal_to_32bit(ip_array[0], ip_array[1], ip_array[2], ip_array[3]);
+
+    // Set old_subnet
+    if(input_cidr == -1 || arg2 == NULL){
+        // Cases 1, 2, 4, 6
+        old_subnet_cidr = __cidr_from_class(class);
+    } 
+    if(input_cidr != -1 && arg2 != NULL){
+        // Cases 3, 5, 7
+        old_subnet_cidr = input_cidr;
+    }
+    *old_subnet = cidr_to_32bit(old_subnet_cidr);
+
+    // Set new_subnet
     if(arg2 == NULL){
-        // Case 1
-        if(__invalid_ip_addr(arg1, IP_ADDR_W_CIDR_REGEX)){
-            fprintf(stderr, "Invalid IP address with CIDR mask\n");
-            return 2;
-        }
-
-        // Get ip address and save it in ip_addr
-        u_int8_t ip_array[4];
-
-        int new_subnet_cidr = __ip_string_to_uint32(arg1, ip_array);
-        *ip_addr = dotted_decimal_to_32bit(ip_array[0], ip_array[1], ip_array[2], ip_array[3]);
-
+        // Case 1 
+        new_subnet_cidr = input_cidr;
         *new_subnet = cidr_to_32bit(new_subnet_cidr);
-
-        // Set old subnet from a classful IP address and propagate error codes
-        return __set_classful_mask(*ip_addr, new_subnet_cidr, old_subnet);
-
-    } else if(index(arg2, 's') || index(arg2, 'h')){
-
-        if(__invalid_ip_addr(arg1, IP_ADDR_REGEX) && __invalid_ip_addr(arg1, IP_ADDR_W_CIDR_REGEX)){
-            fprintf(stderr, "Invalid IP address\n");
-            return 2;
-        }
-
-        if(__invalid_max_s_or_h(arg2)){
-            fprintf(stderr, "Invalid max expression\n");
-            return 4;
-        }
-        u_int8_t ip_array[4];
-        int old_subnet_cidr = __ip_string_to_uint32(arg1, ip_array);
-        *ip_addr = dotted_decimal_to_32bit(ip_array[0], ip_array[1], ip_array[2], ip_array[3]);
-
-        // Process second argument and return new subnet
-        int new_subnet_cidr = __process_max_expression(*ip_addr, arg2, old_subnet_cidr);
-
-        if(new_subnet_cidr < 0){
-            fprintf(stderr, "Error processing max expression\n");
-            return 4;
-        }
-
-        *new_subnet = cidr_to_32bit(new_subnet_cidr);
-
-        if(old_subnet_cidr == -1){
-            // Case 4
-            // Set old subnet from a classful IP address and propagate error codes
-            return __set_classful_mask(*ip_addr, new_subnet_cidr, old_subnet);
-        } else {
-            // Case 5
-            if(old_subnet_cidr > new_subnet_cidr){
-                fprintf(stderr, "Invalid subnet mask\n");
-                return 3;
-            }
-            if(__invalid_network_addr(*ip_addr, *new_subnet)){
-                fprintf(stderr, "Invalid network address\n");
-                return 2;
-            }
-            *old_subnet = cidr_to_32bit(old_subnet_cidr);
-        }
-
-    } else {
+    }
+    if(arg2 != NULL && !__invalid_ip_addr(arg2, IP_ADDR_REGEX)){
+        // If arg2 is a valid IP addr just based on regex
         // Case 2 or 3
-        if(__invalid_ip_addr(arg1, IP_ADDR_REGEX) && __invalid_ip_addr(arg1, IP_ADDR_W_CIDR_REGEX)){
-            fprintf(stderr, "Invalid IP address\n");
-            return 2;
-        }
-        if(__invalid_ip_addr(arg2, IP_ADDR_REGEX)){
-            fprintf(stderr, "Invalid dotted decimal mask\n");
-            return 3;
-        }
-
-
-        u_int8_t ip_array[4];
-        int old_subnet_cidr = __ip_string_to_uint32(arg1, ip_array);
-        *ip_addr = dotted_decimal_to_32bit(ip_array[0], ip_array[1], ip_array[2], ip_array[3]);
 
         u_int8_t new_subnet_array[4];
-        __ip_string_to_uint32(arg2, new_subnet_array);
+        result = __ip_string_to_array(arg2, new_subnet_array, NULL, NULL, 0);
+        if(result){
+            return result;
+        }
         *new_subnet = dotted_decimal_to_32bit(new_subnet_array[0], new_subnet_array[1], new_subnet_array[2], new_subnet_array[3]);
+        new_subnet_cidr = convert_32_mask_to_cdir(*new_subnet);
         
         if(__invalid_32bit_mask(*new_subnet)){
             fprintf(stderr, "Invalid dotted decimal mask\n");
             return 3;
         }
-
-        // New subnet uint32 to cidr
-        int new_subnet_cidr = convert_32_mask_to_cdir(*new_subnet);
-
-        if(old_subnet_cidr == -1){
-            // Case 2
-            // Set old subnet from a classful IP address and propagate error codes
-            return __set_classful_mask(*ip_addr, new_subnet_cidr, old_subnet);
-        } else {
-            // Case 3
-            if(old_subnet_cidr > new_subnet_cidr){
-                fprintf(stderr, "Invalid subnet mask\n");
-                return 3;
-            }
-            if(__invalid_network_addr(*ip_addr, *new_subnet)){
-                fprintf(stderr, "Invalid network address\n");
-                return 2;
-            }
-            *old_subnet = cidr_to_32bit(old_subnet_cidr);
+    }
+    if(arg2 != NULL && !__invalid_max_s_or_h(arg2)){
+        // If arg2 is a valid max expression
+        // Case 4 or 5
+        new_subnet_cidr = __process_max_expression(arg2, old_subnet_cidr);
+        if(new_subnet_cidr == -1){
+            fprintf(stderr, "Invalid max expression\n");
+            return 4;
         }
+        *new_subnet = cidr_to_32bit(new_subnet_cidr);
+    }
+    
+    if(arg2 != NULL && __invalid_ip_addr(arg2, IP_ADDR_REGEX) && __invalid_max_s_or_h(arg2)){
+        fprintf(stderr, "Invalid second argument\n");
+        return 6;
+    }
+
+
+    // Validate new mask - maybe move to a function
+    if(old_subnet_cidr > new_subnet_cidr){
+        fprintf(stderr, "Invalid CIDR mask, smaller than classful mask\n"); 
+        return 3;
+
+    } else if(old_subnet_cidr == new_subnet_cidr){
+        fprintf(stderr, "Invalid CIDR mask, same as classful mask\n");
+        return 3;
+    }
+
+    if(__invalid_network_addr(*ip_addr, *new_subnet)){
+        fprintf(stderr, "Invalid network address\n");
+        return 2;
     }
 
     return 0;

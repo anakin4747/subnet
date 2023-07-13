@@ -13,9 +13,16 @@
 
 typedef int bool_t;
 
+static int __cidr_from_class(char class){
+    // 'A' = 8
+    // 'B' = 16
+    // 'C' = 24
+    return (int)((class - 'A' + 1) * 8);
+}
+
+
 // Validation function
 static bool_t __invalid_ip_addr(char* ip_addr, const char* ip_exp){
-    // Save space on the stack I guess
     regex_t* regex = (regex_t*)malloc(sizeof(regex_t));
 
     // Compile regex
@@ -170,14 +177,8 @@ static int __ip_string_to_array(char* arg, u_int8_t* ip_array, char* class, int*
     return 0;
 }
 
-static int __cidr_from_class(char class){
-    // 'A' = 8
-    // 'B' = 16
-    // 'C' = 24
-    return (int)((class - 'A' + 1) * 8);
-}
-
 // Public function
+// Main interface for processing command line arguments for all cases, and saving 
 int process_input_ip_and_masks(char* arg1, char* arg2, u_int32_t* ip_addr, u_int32_t* new_subnet, u_int32_t* old_subnet){
 
     if(__invalid_ip_addr(arg1, IP_ADDR_REGEX) && __invalid_ip_addr(arg1, IP_ADDR_W_CIDR_REGEX)){

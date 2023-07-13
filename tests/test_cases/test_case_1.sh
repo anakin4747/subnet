@@ -21,81 +21,15 @@ test_for_invalid_errors(){
 # Case 1
 ## Class A
 test_for_invalid_errors 10.0.0./10 "Invalid IP address" 1 A
-
-### Working               ---TODO---
-### Invalid IP Address
-./subnet 10.0.0./10 2>&1 | grep -i "Invalid IP address" > /dev/null
-if [ $? -eq 0 ]; then
-    tests_passed=$((tests_passed + 1))
-else
-    tests_failed=$((tests_failed + 1))
-    echo Case 1, Class A, Invalid IP Address Test Failed
-fi
-
-### Invalid Mask
-./subnet 10.0.0.0/7 2>&1 | grep -i "Invalid CIDR mask, smaller than classful mask" > /dev/null
-if [ $? -eq 0 ]; then
-    tests_passed=$((tests_passed + 1))
-else
-    tests_failed=$((tests_failed + 1))
-    echo Case 1, Class A, Invalid CIDR Mask Test Failed
-fi
-
-### Invalid Mask
-./subnet 10.0.0.0/8 2>&1 | grep -i "Invalid CIDR mask, same as classful mask" > /dev/null
-if [ $? -eq 0 ]; then
-    tests_passed=$((tests_passed + 1))
-else
-    tests_failed=$((tests_failed + 1))
-    echo Case 1, Class A, Invalid CIDR Mask Test Failed
-fi
-
-### Invalid Network Address
-./subnet 10.0.0.1/10 2>&1 | grep -i "Invalid network address" > /dev/null
-if [ $? -eq 0 ]; then
-    tests_passed=$((tests_passed + 1))
-else
-    tests_failed=$((tests_failed + 1))
-    echo Case 1, Class A, Invalid Network Address Test Failed
-fi
+test_for_invalid_errors 10.0.0.0/7 "Invalid CIDR mask, smaller than classful mask" 1 A
+test_for_invalid_errors 10.0.0.0/8 "Invalid CIDR mask, same as classful mask" 1 A
+test_for_invalid_errors 10.0.0.1/10 "Invalid network address" 1 A
 
 ## Class B
-### Working               ---TODO---
-### Invalid IP Address
-./subnet 129.0.0./20 2>&1 | grep -i "Invalid IP address" > /dev/null
-if [ $? -eq 0 ]; then
-    tests_passed=$((tests_passed + 1))
-else
-    tests_failed=$((tests_failed + 1))
-    echo Case 1, Class B, Invalid IP Address Test Failed
-fi
-
-### Invalid Mask
-./subnet 129.0.0.0/15 2>&1 | grep -i "Invalid CIDR mask, smaller than classful mask" > /dev/null
-if [ $? -eq 0 ]; then
-    tests_passed=$((tests_passed + 1))
-else
-    tests_failed=$((tests_failed + 1))
-    echo Case 1, Class B, Invalid CIDR Mask Test Failed
-fi
-
-### Invalid Mask
-./subnet 129.0.0.0/16 2>&1 | grep -i "Invalid CIDR mask, same as classful mask" > /dev/null
-if [ $? -eq 0 ]; then
-    tests_passed=$((tests_passed + 1))
-else
-    tests_failed=$((tests_failed + 1))
-    echo Case 1, Class B, Invalid CIDR Mask Test Failed
-fi
-
-### Invalid Network Address
-./subnet 129.0.0.1/17 2>&1 | grep -i "Invalid network address" > /dev/null
-if [ $? -eq 0 ]; then
-    tests_passed=$((tests_passed + 1))
-else
-    tests_failed=$((tests_failed + 1))
-    echo Case 1, Class B, Invalid Network Address Test Failed
-fi
+test_for_invalid_errors 129.0.0./20 "Invalid IP address" 1 B
+test_for_invalid_errors 129.0.0.0/15 "Invalid CIDR mask, smaller than classful mask" 1 B
+test_for_invalid_errors 129.0.0.0/16 "Invalid CIDR mask, same as classful mask" 1 B
+test_for_invalid_errors 129.0.0.1/17 "Invalid network address" 1 B
 
 ## Class C
 ### Working               ---TODO---

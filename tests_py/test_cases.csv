@@ -1,0 +1,52 @@
+Case,Class,Test,Error
+
+1,A,"10.0.0./9","Invalid IP address"
+1,A,"10.0.0.0/7","Invalid CIDR mask, smaller than classful mask"
+1,A,"10.0.0.0/8","Invalid CIDR mask, same as classful mask"
+1,A,"10.0.0.1/10","Invalid network address"
+
+1,B,"129.0.0./20","Invalid IP address"
+1,B,"129.0.0.0/15","Invalid CIDR mask, smaller than classful mask"
+1,B,"129.0.0.0/16","Invalid CIDR mask, same as classful mask"
+1,B,"129.0.0.1/17","Invalid network address"
+
+1,C,"198.0.0./30","Invalid IP address"
+1,C,"198.0.0.0/23","Invalid CIDR mask, smaller than classful mask"
+1,C,"198.0.0.0/24","Invalid CIDR mask, same as classful mask"
+1,C,"198.0.0.1/25","Invalid network address"
+
+2,A,"10.0.0. 255.192.0.0","Invalid IP address"
+2,A,"10.0.0.0 255.192.0.","Invalid second argument"
+2,A,"10.0.0.0 254.0.0.0","Invalid CIDR mask, smaller than classful mask"
+2,A,"10.0.0.0 255.0.0.0","Invalid CIDR mask, same as classful mask"
+2,A,"10.0.0.1 255.128.0.0","Invalid network address"
+
+2,B,"129.0.0. 255.255.128.0","Invalid IP address"
+2,B,"129.0.0.0 255.255.128.","Invalid second argument"
+2,B,"129.0.0.0 255.254.0.0","Invalid CIDR mask, smaller than classful mask"
+2,B,"129.0.0.0 255.255.0.0","Invalid CIDR mask, same as classful mask"
+2,B,"129.0.0.1 255.255.128.0","Invalid network address"
+
+2,C,"192.0.0. 255.255.255.128","Invalid IP address"
+2,C,"192.0.0.0 255.255.255.","Invalid second argument"
+2,C,"192.0.0.0 255.255.254.0","Invalid CIDR mask, smaller than classful mask"
+2,C,"192.0.0.0 255.255.255.0","Invalid CIDR mask, same as classful mask"
+2,C,"192.0.0.1 255.255.255.128","Invalid network address"
+
+3,A,"10.0.0./9 255.192.0.0","Invalid IP address"
+3,A,"10.0.0.0/9 255.192.0.","Invalid second argument"
+3,A,"10.0.0.0/7 254.0.0.0","Invalid CIDR mask, smaller than classful mask"
+3,A,"10.0.0.0/8 255.0.0.0","Invalid CIDR mask, same as classful mask"
+3,A,"10.0.0.1/9 255.128.0.0","Invalid network address"
+
+3,B,"129.0.0./17 255.255.128.0","Invalid IP address"
+3,B,"129.0.0.0/17 255.255.128.","Invalid second argument"
+3,B,"129.0.0.0/15 255.254.0.0","Invalid CIDR mask, smaller than classful mask"
+3,B,"129.0.0.0/16 255.255.0.0","Invalid CIDR mask, same as classful mask"
+3,B,"129.0.0.1/17 255.255.128.0","Invalid network address"
+
+3,C,"192.0.0. 255.255.255.128","Invalid IP address"
+3,C,"192.0.0.0 255.255.255.","Invalid second argument"
+3,C,"192.0.0.0 255.255.254.0","Invalid CIDR mask, smaller than classful mask"
+3,C,"192.0.0.0 255.255.255.0","Invalid CIDR mask, same as classful mask"
+3,C,"192.0.0.1 255.255.255.128","Invalid network address"

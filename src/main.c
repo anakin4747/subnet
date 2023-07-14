@@ -23,13 +23,13 @@ int main(int argc, char** argv){
         argv[2] = NULL;
     } 
 
+    // This is common for cases 1-5
+
     // Gather the IP address and the new and old masks from the command line arguments
     result = process_input_ip_and_masks(argv[1], argv[2], &ip_addr, &new_subnet, &old_subnet);
     if(result){
         exit(result);
     }
-
-    // This is common for cases 1-5
 
     // Allocate a subnet_block object
     struct subnet_block_t* subnet_block = subnet_block_malloc();

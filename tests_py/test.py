@@ -11,6 +11,7 @@ def invalid_error_test(test_args, err_msg, case, _class):
         return 0
     else:
         print(f"\nCase {case}, Class {_class}, {err_msg} Test Failed")
+        print(f"Command: {command}")
         print(f"Stdout: {result.stdout}")
         print(f"Stderr: {result.stderr}")
         return 1

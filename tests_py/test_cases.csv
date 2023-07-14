@@ -1,4 +1,4 @@
-Case,Class,Test,Error
+Case,Class,Test,Error,Comments
 
 1,A,"10.0.0./9","Invalid IP address"
 1,A,"10.0.0.0/7","Invalid CIDR mask, smaller than old mask"
@@ -17,36 +17,41 @@ Case,Class,Test,Error
 
 2,A,"10.0.0. 255.192.0.0","Invalid IP address"
 2,A,"10.0.0.0 255.192.0.","Invalid second argument"
+2,A,"10.0.0.0 10.0.0.0","Invalid dotted decimal mask"
 2,A,"10.0.0.0 254.0.0.0","Invalid CIDR mask, smaller than old mask"
 2,A,"10.0.0.0 255.0.0.0","Invalid CIDR mask, same as old mask"
 2,A,"10.0.0.1 255.128.0.0","Invalid network address"
 
 2,B,"129.0.0. 255.255.128.0","Invalid IP address"
 2,B,"129.0.0.0 255.255.128.","Invalid second argument"
+2,B,"129.0.0.0 129.0.0.0","Invalid dotted decimal mask"
 2,B,"129.0.0.0 255.254.0.0","Invalid CIDR mask, smaller than old mask"
 2,B,"129.0.0.0 255.255.0.0","Invalid CIDR mask, same as old mask"
 2,B,"129.0.0.1 255.255.128.0","Invalid network address"
 
 2,C,"192.0.0. 255.255.255.128","Invalid IP address"
 2,C,"192.0.0.0 255.255.255.","Invalid second argument"
+2,C,"192.0.0.0 192.128.0.0","Invalid dotted decimal mask"
 2,C,"192.0.0.0 255.255.254.0","Invalid CIDR mask, smaller than old mask"
 2,C,"192.0.0.0 255.255.255.0","Invalid CIDR mask, same as old mask"
 2,C,"192.0.0.1 255.255.255.128","Invalid network address"
 
 3,A,"10.0.0./9 255.192.0.0","Invalid IP address"
 3,A,"10.0.0.0/9 255.192.0.","Invalid second argument"
+3,A,"10.0.0.0/9 10.1.0.0","Invalid dotted decimal mask"
 3,A,"10.0.0.0/9 255.0.0.0","Invalid CIDR mask, smaller than old mask"
 3,A,"10.0.0.0/9 255.128.0.0","Invalid CIDR mask, same as old mask"
 3,A,"10.0.0.1/9 255.192.0.0","Invalid network address"
 
 3,B,"129.0.0./17 255.255.192.0","Invalid IP address"
 3,B,"129.0.0.0/17 255.255.192.","Invalid second argument"
+3,B,"129.0.0.0/17 192.255.0.0","Invalid dotted decimal mask"
 3,B,"129.0.0.0/17 255.255.0.0","Invalid CIDR mask, smaller than old mask"
 3,B,"129.0.0.0/17 255.255.128.0","Invalid CIDR mask, same as old mask"
 3,B,"129.0.0.1/17 255.255.192.0","Invalid network address"
 
 3,C,"192.0.0./25 255.255.255.192","Invalid IP address"
-3,C,"192.0.0.0/25 255.255.255.","Invalid second argument"
+3,C,"192.0.0.0/25 255.255.255.","Invalid second argument", # Not yet done with the invalid dotted decimal mask tests
 3,C,"192.0.0.0/25 255.255.255.0","Invalid CIDR mask, smaller than old mask"
 3,C,"192.0.0.0/25 255.255.255.128","Invalid CIDR mask, same as old mask"
 3,C,"192.0.0.1/25 255.255.255.192","Invalid network address"

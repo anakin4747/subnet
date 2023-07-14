@@ -120,7 +120,7 @@ static int __process_max_expression(char* arg, int old_mask_cidr){
 // Converts a valid IP string to an array of 4 bytes (ip_array)
 // Saves class of IP based off first octet in char* class
 // Saves Subnet in subnet_cidr if CIDR notation is present, -1 otherwise
-static int __ip_string_to_array(char* arg, u_int8_t* ip_array, char* class, int* subnet_cidr, bool_t ip_not_mask){
+static int __ip_string_to_array(char* arg, u_int8_t* ip_array, char* class, int* subnet_cidr){
     int digit_count = 0;    
     int octet_count = 0;    
     int subnet_input;
@@ -143,7 +143,8 @@ static int __ip_string_to_array(char* arg, u_int8_t* ip_array, char* class, int*
     buffer[digit_count] = 0;    
     ip_array[octet_count] = atoi(buffer); 
 
-    if(ip_not_mask){
+    // Prevents seg fault and reduces need for boolean arg
+    if(class != NULL){
         if(*arg++ == '/'){
             for(digit_count = 0; *arg; arg++){
                 buffer[digit_count++] = *arg;  
@@ -158,16 +159,14 @@ static int __ip_string_to_array(char* arg, u_int8_t* ip_array, char* class, int*
         } else {
             *subnet_cidr = -1;
         }
-    }
 
-    if(ip_array[0] <= 126){
-        *class = 'A';
-    } else if(ip_array[0] >= 128 && ip_array[0] <= 191){
-        *class = 'B';
-    } else if(ip_array[0] >= 192 && ip_array[0] <= 223){
-        *class = 'C';
-    } else {
-        if(ip_not_mask){
+        if(ip_array[0] <= 126){
+            *class = 'A';
+        } else if(ip_array[0] >= 128 && ip_array[0] <= 191){
+            *class = 'B';
+        } else if(ip_array[0] >= 192 && ip_array[0] <= 223){
+            *class = 'C';
+        } else {
             // Check if the dotted decimal string is an IP address instead of a mask
             fprintf(stderr, "Invalid IP address based on first octet\n");
             return -2;
@@ -193,7 +192,7 @@ int process_input_ip_and_masks(char* arg1, char* arg2, u_int32_t* ip_addr, u_int
     // Convert ip address from string to array 
     // Save class & returning error if class D or E
     // Save CIDR or -1 in input_cidr & returning error if CIDR > 30
-    result = __ip_string_to_array(arg1, ip_array, &class, &input_cidr, 1);
+    result = __ip_string_to_array(arg1, ip_array, &class, &input_cidr);
     if(result){
         return result;
     }
@@ -222,7 +221,7 @@ int process_input_ip_and_masks(char* arg1, char* arg2, u_int32_t* ip_addr, u_int
         // Case 2 or 3
 
         u_int8_t new_subnet_array[4];
-        result = __ip_string_to_array(arg2, new_subnet_array, NULL, NULL, 0);
+        result = __ip_string_to_array(arg2, new_subnet_array, NULL, NULL);
         if(result){
             return result;
         }
@@ -262,6 +261,7 @@ int process_input_ip_and_masks(char* arg1, char* arg2, u_int32_t* ip_addr, u_int
         return 3;
     }
 
+    // Validate network address
     if(__invalid_network_addr(*ip_addr, *new_subnet)){
         fprintf(stderr, "Invalid network address\n");
         return 2;

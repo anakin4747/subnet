@@ -10,7 +10,7 @@ This tool can:
     - Interpret subnet masks in several forms (Classful, CIDR, Dotted Decimal)
     - Calculate subnet masks for given host or subnet requirements
 
-I used C because I wanted a chance to use some more advanced C programming practices I leaned recently like how to implement object oriented programming in C. For more details on the OOP concepts in this project see [OOP](docs/OOP.md). 
+I used C because I wanted a chance to use some more advanced C programming practices I learnt recently like how to implement object oriented programming in C. For more details on the OOP concepts in this project see [OOP](docs/OOP.md). 
 
 I am very happy with how this program turned out in terms of abstraction. The input processing feels very detached from calculating the output which is thanks to object oriented thinking.
 

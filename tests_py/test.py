@@ -15,6 +15,11 @@ def invalid_error_test(test_args, err_msg, case, _class):
         print(f"Stderr: {result.stderr}")
         return 1
 
+# def correct_output_test(test_args, case, _class):
+#     command = "./subnet " + test_args
+#     result = subprocess.run(command, shell=True, capture_output=True, text=True)
+
+
 tests_failed = 0
 tests_ran = 0
 

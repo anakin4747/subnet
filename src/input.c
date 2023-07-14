@@ -20,8 +20,7 @@ static int __cidr_from_class(char class){
     return (int)((class - 'A' + 1) * 8);
 }
 
-
-// Validation function
+// Regex validation function
 static bool_t __invalid_ip_addr(char* ip_addr, const char* ip_exp){
     regex_t* regex = (regex_t*)malloc(sizeof(regex_t));
 
@@ -42,22 +41,7 @@ static bool_t __invalid_ip_addr(char* ip_addr, const char* ip_exp){
     return 0;
 }
 
-// Validation function
-static bool_t __invalid_32bit_mask(u_int32_t mask_32){
-    // Would love a replacement thats just boolean logic instead so that its shorter
-    int i;
-    for(i = 0; (mask_32 & 1) == 0; mask_32 >>= 1, i++){ }
-    for(; (mask_32 & 1); mask_32 >>= 1, i++){ }
-
-    return i == 32 ? 0 : 1;
-}
-
-// Validation function
-static bool_t __invalid_network_addr(u_int32_t net_addr, u_int32_t new_mask){
-    return (net_addr & ~new_mask);
-}
-
-// Validation function
+// Regex validation function
 static bool_t __invalid_max_s_or_h(char* arg){
     regex_t* regex = (regex_t*)malloc(sizeof(regex_t));
 
@@ -76,6 +60,21 @@ static bool_t __invalid_max_s_or_h(char* arg){
 
     free(regex);
     return 0;
+}
+
+// Validation function
+static bool_t __invalid_32bit_mask(u_int32_t mask_32){
+    // Would love a replacement thats just digital logic instead so that its shorter
+    int i;
+    for(i = 0; (mask_32 & 1) == 0; mask_32 >>= 1, i++){ }
+    for(; (mask_32 & 1); mask_32 >>= 1, i++){ }
+
+    return i == 32 ? 0 : 1;
+}
+
+// Validation function
+static bool_t __invalid_network_addr(u_int32_t net_addr, u_int32_t new_mask){
+    return (net_addr & ~new_mask);
 }
 
 // Private function
@@ -246,13 +245,14 @@ int process_input_ip_and_masks(char* arg1, char* arg2, u_int32_t* ip_addr, u_int
         *new_subnet = cidr_to_32bit(new_subnet_cidr);
     }
     
+    // Catch invalid argv[2]
     if(arg2 != NULL && __invalid_ip_addr(arg2, IP_ADDR_REGEX) && __invalid_max_s_or_h(arg2)){
         fprintf(stderr, "Invalid second argument\n");
         return 6;
     }
 
 
-    // Validate new mask - maybe move to a function
+    // Validate new mask
     if(old_subnet_cidr > new_subnet_cidr){
         fprintf(stderr, "Invalid CIDR mask, smaller than old mask\n"); 
         return 3;

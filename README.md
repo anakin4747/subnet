@@ -84,7 +84,7 @@ of the [Network address].
     
 Examples:
 
-    subnet 192.168.0.0 100s     # Calculate a new subnet mask to accommodate at least 100 subnets with the maximum 
+    subnet 192.168.0.0 60s      # Calculate a new subnet mask to accommodate at least 60 subnets with the maximum 
                                 # hosts per subnet possible. The old subnet is calculated from the class.
 
     subnet 10.0.0.0 100h        # Calculate a new subnet mask to accommodate at least 100 hosts with the maximum 
@@ -101,7 +101,7 @@ appropriate new subnet mask.  The old subnet mask is in CIDR notation.
 
 Examples:
 
-    subnet 192.168.0.0/25 100s  # Calculate a new subnet mask to accommodate at least 100 subnets with the maximum 
+    subnet 192.168.0.0/25 60s   # Calculate a new subnet mask to accommodate at least 60 subnets with the maximum 
                                 # hosts per subnet possible. The old subnet is obtained from the CIDR notation.
 
     subnet 10.0.0.0/9 100h      # Calculate a new subnet mask to accommodate at least 100 hosts with the maximum 

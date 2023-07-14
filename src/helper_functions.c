@@ -11,8 +11,8 @@ u_int32_t cidr_to_32bit(int cidr){
 
 int convert_32_mask_to_cdir(u_int32_t mask_32){
     // I want to replace this with some digital logic instead so its quicker
-    int num_of_zeros;
-    for(num_of_zeros = 0; (mask_32 & 1) == 0; num_of_zeros++, mask_32 >>= 1){ }
+    int num_of_zeros, i;
+    for(num_of_zeros = i = 0; (mask_32 & 1) == 0 && i < 32; num_of_zeros++, mask_32 >>= 1, i++){ }
     return 32 - num_of_zeros;
 }
 

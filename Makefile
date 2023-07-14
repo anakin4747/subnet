@@ -20,6 +20,13 @@ $(BINARY): $(OBJECTS)
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
+test: $(BINARY)
+	@echo "Testing invalid inputs"
+	@./tests_py/test.py
+	@echo "Testing for memory leaks with valgrind"
+	@echo "This may take some time"
+	@./tests_py/valgrind_test.py
+
 clean:
 	rm -rf $(BINARY) $(OBJECTS) $(DEPFILES)
 

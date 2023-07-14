@@ -1,5 +1,11 @@
 Case,Class,Test,Error,Comments
 
+1-5,A-C,"000.000.000.000 000.000.000.000","Invalid dotted decimal mask", # Error caused by loops in helper functions which became endless loops on all zero inputs
+
+1,A,"255.0.0.0","Invalid IP address based on first octet"
+1,B,"255.255.0.0","Invalid IP address based on first octet"
+1,C,"255.255.255.0","Invalid IP address based on first octet"
+
 1,A,"10.0.0./9","Invalid IP address"
 1,A,"10.0.0.0/7","Invalid CIDR mask, smaller than old mask"
 1,A,"10.0.0.0/8","Invalid CIDR mask, same as old mask"
@@ -51,7 +57,8 @@ Case,Class,Test,Error,Comments
 3,B,"129.0.0.1/17 255.255.192.0","Invalid network address"
 
 3,C,"192.0.0./25 255.255.255.192","Invalid IP address"
-3,C,"192.0.0.0/25 255.255.255.","Invalid second argument", # Not yet done with the invalid dotted decimal mask tests
+3,C,"192.0.0.0/25 255.255.255.","Invalid second argument"
+3,C,"192.0.0.0/25 192.255.255.0","Invalid dotted decimal mask"
 3,C,"192.0.0.0/25 255.255.255.0","Invalid CIDR mask, smaller than old mask"
 3,C,"192.0.0.0/25 255.255.255.128","Invalid CIDR mask, same as old mask"
 3,C,"192.0.0.1/25 255.255.255.192","Invalid network address"

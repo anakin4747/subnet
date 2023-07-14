@@ -34,7 +34,7 @@ The IP address class header file is the API which it is seen as by the rest of t
 
     #endif // IP_ADDR_H
 
-The subnet block class consumes this public API of the IP address class. This class contains 4 ip_addr_t pointers. These must be allocated, constructed, destructed, and freed by subnet_block_t class. The attributes of those ip_addr cannot be accessed by the API and must use the provided behaviour functions to interact with their attributes. The ip_addr pointers must be pointer as they have not been defined yet but a pointers size is always known.
+The subnet block class consumes this public API of the IP address class. This class contains 4 ip_addr_t pointers. These must be allocated, constructed, destructed, and freed by subnet_block_t class. The attributes of those ip_addr cannot be accessed by the API and must use the provided behaviour functions to interact with their attributes. The ip_addr pointers must be pointer as they have not been defined yet but a pointers size is always known. So you couldn't have a ip_addr variable in the subnet_block struct without making the ip_addr's attributes public. The pointer allows for the isolation and information hiding.
 
     // subnet_block.c
     
@@ -54,3 +54,6 @@ The subnet block class consumes this public API of the IP address class. This cl
         struct ip_addr_t* new_subnet_mask;
         struct ip_addr_t* old_subnet_mask;
     } subnet_block_t;
+    ...
+
+I learnt this practice from the [Extreme C textbook](https://www.packtpub.com/free-ebook/extreme-c/9781789343625) by Kamran Amini.

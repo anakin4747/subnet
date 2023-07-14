@@ -41,3 +41,9 @@ This allows me to immediately detect errors after every change.
     Tests failed: 0
     
     $
+
+For memory leak testing you can run the make test target.
+
+    $ make test
+
+This will run the tests_py/test.py script then it will run tests_py/valgrind_test.py for memory leaks. You must have Valgrind installed for this to work. The Valgrind test tries every input in the tests_py/test_cases.csv file as well so this test may take some time.

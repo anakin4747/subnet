@@ -27,16 +27,19 @@ static bool_t __invalid_ip_addr(char* ip_addr, const char* ip_exp){
     // Compile regex
     if(regcomp(regex, ip_exp, REG_EXTENDED)){
         fprintf(stderr, "Could not compile REGEX\n");
+        regfree(regex);
         free(regex);
         return 1;
     }
 
     // Perform regex comparison
     if(regexec(regex, ip_addr, 0, NULL, 0)){
+        regfree(regex);
         free(regex);
         return 1;
     }
 
+    regfree(regex);
     free(regex);
     return 0;
 }
@@ -48,16 +51,19 @@ static bool_t __invalid_max_s_or_h(char* arg){
     // Compile regex
     if(regcomp(regex, MAX_EXPRESSION_REGEX, REG_EXTENDED)){
         fprintf(stderr, "Could not compile REGEX\n");
+        regfree(regex);
         free(regex);
         return 1;
     }
 
     // Perform regex comparison
     if(regexec(regex, arg, 0, NULL, 0)){
+        regfree(regex);
         free(regex);
         return 1;
     }
 
+    regfree(regex);
     free(regex);
     return 0;
 }
@@ -66,8 +72,8 @@ static bool_t __invalid_max_s_or_h(char* arg){
 static bool_t __invalid_32bit_mask(u_int32_t mask_32){
     // Would love a replacement thats just digital logic instead so that its shorter
     int i;
-    for(i = 0; (mask_32 & 1) == 0; mask_32 >>= 1, i++){ }
-    for(; (mask_32 & 1); mask_32 >>= 1, i++){ }
+    for(i = 0; (mask_32 & 1) == 0 && i < 34; mask_32 >>= 1, i++){ }
+    for(; (mask_32 & 1) && i < 34; mask_32 >>= 1, i++){ }
 
     return i == 32 ? 0 : 1;
 }

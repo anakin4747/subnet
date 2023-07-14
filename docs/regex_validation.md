@@ -21,16 +21,19 @@ The __invalid_ip_addr function is one of the functions which performs the regex 
         // Compile regex
         if(regcomp(regex, ip_exp, REG_EXTENDED)){
             fprintf(stderr, "Could not compile REGEX\n");
+            regfree(regex);
             free(regex);
             return 1;
         }
 
         // Perform regex comparison
         if(regexec(regex, ip_addr, 0, NULL, 0)){
+            regfree(regex);
             free(regex);
             return 1;
         }
 
+        regfree(regex);
         free(regex);
         return 0;
     }
